@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BaZi Compatibility · Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #2a1810;
+    --ink-soft: #5a4030;
+    --ink-light: #8a6f5a;
+    --gold: #8b6914;
+    --gold-deep: #6d4f0a;
+    --gold-bright: #c9a227;
+    --paper: #f5ecd9;
+    --paper-warm: #ebdcc0;
+    --paper-deep: #d9c49a;
+    --red-seal: #a8201a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, #f5ecd9 0%, #ebdcc0 60%, #d9c49a 100%);
+    background-attachment: fixed;
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    min-height: 100vh;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(139,105,20,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(168,32,26,0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 50px 20px 80px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 16px;
+    animation: fadeDown 1s ease both;
+  }
+
+  .header-ornament {
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 8px;
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+
+  .title-cn {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.6rem;
+    color: var(--gold-deep);
+    letter-spacing: 8px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    color: var(--ink);
+    letter-spacing: 2px;
+    line-height: 1.2;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  .subtitle {
+    color: var(--ink-light);
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    margin-top: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  /* Intro / About section */
+  .intro {
+    background: linear-gradient(135deg, rgba(255,253,247,0.85) 0%, rgba(245,236,217,0.65) 100%);
+    border: 1px solid rgba(139,105,20,0.3);
+    border-radius: 3px;
+    padding: 32px 32px;
+    margin: 36px 0 36px;
+    box-shadow: 0 2px 12px rgba(139,105,20,0.08);
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .intro h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .intro h2 .cn {
+    font-family: 'Ma Shan Zheng', cursive;
+    color: var(--gold-deep);
+    font-size: 1.3rem;
+    margin-right: 10px;
+    letter-spacing: 4px;
+  }
+
+  .intro-subtitle {
+    color: var(--ink-light);
+    font-size: 0.82rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .intro p {
+    font-size: 0.98rem;
+    color: var(--ink);
+    line-height: 1.9;
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+
+  .intro p strong { color: var(--red-seal); font-weight: 600; }
+  .intro p em { color: var(--gold-deep); font-style: italic; font-weight: 500; }
+
+  .pillars-legend {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(139,105,20,0.2);
+  }
+
+  @media (max-width: 700px) {
+    .pillars-legend { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .legend-item {
+    text-align: center;
+    padding: 12px 8px;
+    background: rgba(255,253,247,0.5);
+    border: 1px solid rgba(139,105,20,0.15);
+    border-radius: 3px;
+  }
+
+  .legend-item .cn {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.4rem;
+    color: var(--gold-deep);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+
+  .legend-item .name {
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  .legend-item .desc {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .correction-note {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(139,105,20,0.25);
+    border-left: 3px solid var(--gold);
+    border-radius: 2px;
+    padding: 14px 20px;
+    margin: 28px auto 36px;
+    max-width: 620px;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    text-align: center;
+    animation: fadeDown 1s 0.2s ease both;
+  }
+  .correction-note strong { color: var(--gold-deep); font-weight: 600; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    margin-bottom: 36px;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+
+  @media (max-width: 700px) {
+    .charts-row { grid-template-columns: 1fr; }
+    .divider-col { flex-direction: row !important; padding: 24px 0 !important; }
+    .divider-line { width: 80px !important; height: 1px !important; }
+    .analysis-grid { grid-template-columns: 1fr !important; }
+    .interactions { grid-template-columns: 1fr !important; }
+  }
+
+  .person-card {
+    background: linear-gradient(160deg, rgba(255,253,247,0.85) 0%, rgba(245,236,217,0.7) 100%);
+    border: 1px solid rgba(139,105,20,0.3);
+    border-radius: 3px;
+    padding: 28px 22px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(139,105,20,0.08);
+  }
+
+  .person-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .person-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 4px;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .person-date {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .true-time {
+    font-size: 0.78rem;
+    color: var(--gold-deep);
+    text-align: center;
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+
+  .pillar-label {
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .pillar-stem, .pillar-branch {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.5rem;
+    border-radius: 3px;
+    position: relative;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(139,105,20,0.3);
+  }
+
+  .pillar-stem {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,236,217,0.7));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(139,105,20,0.1);
+  }
+
+  .pillar-day .pillar-stem {
+    border: 2px solid var(--gold);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 0 0 2px rgba(201,162,39,0.15), 0 2px 4px rgba(139,105,20,0.15);
+  }
+
+  .pillar-day .pillar-label {
+    color: var(--gold-deep);
+    font-weight: 700;
+  }
+
+  .pinyin {
+    font-size: 0.6rem;
+    color: var(--ink-light);
+    margin-top: 2px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+
+  .element-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
+  }
+
+  .el-wood { background: #5a8c3f; }
+  .el-fire { background: #c43a2a; }
+  .el-earth { background: #b8860b; }
+  .el-metal { background: #8a8a8a; }
+  .el-water { background: #2273a8; }
+
+  .txt-wood { color: #3d6b22 !important; }
+  .txt-fire { color: #a81e0e !important; }
+  .txt-earth { color: #8b6914 !important; }
+  .txt-metal { color: #6a6a6a !important; }
+  .txt-water { color: #155a87 !important; }
+
+  .day-master-label {
+    font-size: 0.85rem;
+    color: var(--gold-deep);
+    text-align: center;
+    margin: 14px 0 6px;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .day-master-readout {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  .day-master-readout strong {
+    color: var(--red-seal);
+  }
+
+  .elements-bar { margin-top: 18px; }
+
+  .elements-title {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .elements-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+
+  .element-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .element-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .element-bar-wrap {
+    width: 100%;
+    height: 38px;
+    background: rgba(139,105,20,0.08);
+    border-radius: 2px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .element-bar-fill {
+    width: 100%;
+    border-radius: 2px 2px 0 0;
+    transition: height 1s ease;
+  }
+
+  .element-count {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .divider-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 0;
+  }
+
+  .yin-yang {
+    width: 48px;
+    height: 48px;
+    animation: rotateSlow 24s linear infinite;
+  }
+
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .divider-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(180deg, transparent, rgba(139,105,20,0.4), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .compat-section {
+    background: linear-gradient(135deg, rgba(255,253,247,0.85) 0%, rgba(245,236,217,0.65) 100%);
+    border: 1px solid rgba(139,105,20,0.3);
+    border-radius: 3px;
+    padding: 36px 32px;
+    margin-bottom: 28px;
+    animation: fadeUp 1s 0.6s ease both;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(139,105,20,0.08);
+  }
+
+  .compat-section::after {
+    content: '緣';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 8rem;
+    color: rgba(139,105,20,0.06);
+    pointer-events: none;
+  }
+
+  .section-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    color: var(--ink);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .section-heading::before,
+  .section-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139,105,20,0.4));
+  }
+
+  .section-heading::after {
+    background: linear-gradient(90deg, rgba(139,105,20,0.4), transparent);
+  }
+
+  .score-area {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .score-circle svg { transform: rotate(-90deg); }
+
+  .score-circle-bg {
+    fill: none;
+    stroke: rgba(139,105,20,0.12);
+    stroke-width: 8;
+  }
+
+  .score-circle-fill {
+    fill: none;
+    stroke: url(#goldGrad);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 251.2;
+    animation: drawCircle 2s 1s ease both;
+  }
+
+  @keyframes drawCircle {
+    from { stroke-dashoffset: 251.2; }
+    to { stroke-dashoffset: 60; }
+  }
+
+  .score-num {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-num-big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    color: var(--ink);
+    line-height: 1;
+    display: block;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .score-num-small {
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .score-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .tag {
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 0.85rem;
+    border: 1px solid;
+    font-weight: 500;
+  }
+
+  .tag-good {
+    border-color: rgba(74, 124, 63, 0.6);
+    background: rgba(74,124,63,0.12);
+    color: #3d6b22;
+  }
+
+  .tag-warn {
+    border-color: rgba(168,32,26,0.5);
+    background: rgba(168,32,26,0.08);
+    color: var(--red-seal);
+  }
+
+  .tag-note {
+    border-color: rgba(34,115,168,0.5);
+    background: rgba(34,115,168,0.08);
+    color: #155a87;
+  }
+
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .analysis-block {
+    background: rgba(255,253,247,0.6);
+    border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 3px;
+    padding: 20px;
+  }
+
+  .analysis-block h4 {
+    font-size: 1.05rem;
+    color: var(--gold-deep);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .analysis-block h4 span { font-size: 1.1rem; }
+
+  .analysis-block p {
+    font-size: 0.96rem;
+    color: var(--ink);
+    line-height: 1.85;
+    font-weight: 400;
+  }
+
+  .analysis-block strong {
+    color: var(--red-seal);
+    font-weight: 600;
+  }
+
+  .interactions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .interaction-item {
+    text-align: center;
+    padding: 18px 12px;
+    background: rgba(255,253,247,0.5);
+    border: 1px solid rgba(139,105,20,0.2);
+    border-radius: 3px;
+  }
+
+  .interaction-symbol {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.7rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: 2px;
+  }
+
+  .interaction-name {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  .interaction-desc {
+    font-size: 0.86rem;
+    color: var(--ink);
+    line-height: 1.65;
+  }
+
+  .interaction-good {
+    border-color: rgba(74,124,63,0.4);
+    background: rgba(74,124,63,0.06);
+  }
+  .interaction-good .interaction-name { color: #3d6b22; }
+
+  .conclusion-text {
+    font-size: 1.05rem;
+    color: var(--ink);
+    line-height: 2;
+    font-weight: 400;
+  }
+
+  .conclusion-text strong {
+    color: var(--red-seal);
+    font-weight: 600;
+  }
+
+  .conclusion-coda {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 48px;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    animation: fadeUp 1s 1.2s ease both;
+  }
+
+  .footer-ornament {
+    font-size: 1.2rem;
+    color: var(--gold);
+    margin-bottom: 10px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <div class="header-ornament">✦ ✦ ✦</div>
+    <div class="title-cn">八字合盤</div>
+    <h1 class="title">A Compatibility Reading</h1>
+    <div class="subtitle">True Solar Time · Demo</div>
+  </div>
+
+  <!-- Intro / About BaZi -->
+  <div class="intro">
+    <h2><span class="cn">八字</span>What is BaZi?</h2>
+    <div class="intro-subtitle">Eight Characters · A 2,000-year-old system</div>
+
+    <p>
+      <strong>BaZi</strong> (literally "Eight Characters") is a Chinese metaphysical system that reads a person's life through the exact moment they were born. From the year, month, day, and hour of birth, four <em>pillars</em> are extracted — each made of two Chinese characters: one <em>heavenly stem</em> (天干) and one <em>earthly branch</em> (地支). Together, that's <strong>eight characters</strong> — hence the name.
+    </p>
+
+    <p>
+      Each character maps to one of the <strong>Five Elements</strong>: Wood, Fire, Earth, Metal, Water (木火土金水). The distribution and interactions of these elements form a portrait of someone's temperament, tendencies, and life pattern — the way an astrologer might use a natal chart.
+    </p>
+
+    <p>
+      The most important character is the <em>Day Master</em> (日主) — the heavenly stem of the day pillar. It represents the <strong>core self</strong>. When reading two people together, we compare how their Day Masters relate, how their elements complement or clash, and how their branches form alliances or oppositions.
+    </p>
+
+    <div class="pillars-legend">
+      <div class="legend-item">
+        <div class="cn">年柱</div>
+        <div class="name">Year Pillar</div>
+        <div class="desc">Roots · ancestry · early life</div>
+      </div>
+      <div class="legend-item">
+        <div class="cn">月柱</div>
+        <div class="name">Month Pillar</div>
+        <div class="desc">Parents · social identity · career</div>
+      </div>
+      <div class="legend-item">
+        <div class="cn">日柱</div>
+        <div class="name">Day Pillar</div>
+        <div class="desc">Self · marriage · adult life</div>
+      </div>
+      <div class="legend-item">
+        <div class="cn">時柱</div>
+        <div class="name">Hour Pillar</div>
+        <div class="desc">Children · later years · inner world</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="correction-note">
+    <strong>Solar time correction</strong>　calculated from each birthplace's longitude<br>
+    Shanghai +6 min　|　Scarborough, Toronto −77 min
+  </div>
+
+  <div class="charts-row">
+
+    <!-- Emma -->
+    <div class="person-card">
+      <div class="person-name">Emma</div>
+      <div class="person-date">May 10, 1998 · 8:00 AM · Shanghai</div>
+      <div class="true-time">True solar time ≈ 08:06 · Chén Hour</div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-label">Year</div>
+          <div class="pillar-stem txt-earth">戊<div class="element-dot el-earth"></div></div>
+          <div class="pillar-branch txt-wood">寅</div>
+          <div class="pinyin">Wù Yín</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-label">Month</div>
+          <div class="pillar-stem txt-fire">丁<div class="element-dot el-fire"></div></div>
+          <div class="pillar-branch txt-fire">巳</div>
+          <div class="pinyin">Dīng Sì</div>
+        </div>
+        <div class="pillar pillar-day">
+          <div class="pillar-label">Day</div>
+          <div class="pillar-stem txt-fire">丙<div class="element-dot el-fire"></div></div>
+          <div class="pillar-branch txt-fire">午</div>
+          <div class="pinyin">Bǐng Wǔ</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-label">Hour</div>
+          <div class="pillar-stem txt-water">壬<div class="element-dot el-water"></div></div>
+          <div class="pillar-branch txt-earth">辰</div>
+          <div class="pinyin">Rén Chén</div>
+        </div>
+      </div>
+
+      <div class="day-master-label">DAY MASTER</div>
+      <div class="day-master-readout">
+        <strong>丙 Bǐng · Yang Fire</strong><br>
+        <em>The sun. Bright, warm, expressive.</em>
+      </div>
+
+      <div class="elements-bar">
+        <div class="elements-title">Element Distribution</div>
+        <div class="elements-grid">
+          <div class="element-item">
+            <div class="element-name txt-wood">Wood</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:25%;background:#5a8c3fcc"></div></div>
+            <div class="element-count">1</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-fire">Fire</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:95%;background:#c43a2acc"></div></div>
+            <div class="element-count">4</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-earth">Earth</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:50%;background:#b8860bcc"></div></div>
+            <div class="element-count">2</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-metal">Metal</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:5%;background:#8a8a8acc"></div></div>
+            <div class="element-count">0</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-water">Water</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:25%;background:#2273a8cc"></div></div>
+            <div class="element-count">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider-col">
+      <div class="divider-line"></div>
+      <svg class="yin-yang" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#c9a227"/>
+            <stop offset="100%" style="stop-color:#8b6914"/>
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(139,105,20,0.4)" stroke-width="1.5"/>
+        <path d="M50 6 A44 44 0 0 1 50 94 A22 22 0 0 1 50 50 A22 22 0 0 0 50 6Z" fill="rgba(42,24,16,0.85)"/>
+        <path d="M50 6 A44 44 0 0 0 50 94 A22 22 0 0 0 50 50 A22 22 0 0 1 50 6Z" fill="rgba(245,236,217,0.95)"/>
+        <circle cx="50" cy="28" r="8" fill="rgba(245,236,217,0.95)"/>
+        <circle cx="50" cy="72" r="8" fill="rgba(42,24,16,0.85)"/>
+        <circle cx="50" cy="28" r="3" fill="rgba(42,24,16,0.85)"/>
+        <circle cx="50" cy="72" r="3" fill="rgba(245,236,217,0.95)"/>
+      </svg>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- David -->
+    <div class="person-card">
+      <div class="person-name">David</div>
+      <div class="person-date">November 15, 2000 · 3:00 PM · Toronto</div>
+      <div class="true-time">True solar time ≈ 13:43 · Wèi Hour</div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-label">Year</div>
+          <div class="pillar-stem txt-metal">庚<div class="element-dot el-metal"></div></div>
+          <div class="pillar-branch txt-earth">辰</div>
+          <div class="pinyin">Gēng Chén</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-label">Month</div>
+          <div class="pillar-stem txt-fire">丁<div class="element-dot el-fire"></div></div>
+          <div class="pillar-branch txt-water">亥</div>
+          <div class="pinyin">Dīng Hài</div>
+        </div>
+        <div class="pillar pillar-day">
+          <div class="pillar-label">Day</div>
+          <div class="pillar-stem txt-fire">丙<div class="element-dot el-fire"></div></div>
+          <div class="pillar-branch txt-wood">寅</div>
+          <div class="pinyin">Bǐng Yín</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-label">Hour</div>
+          <div class="pillar-stem txt-wood">乙<div class="element-dot el-wood"></div></div>
+          <div class="pillar-branch txt-earth">未</div>
+          <div class="pinyin">Yǐ Wèi</div>
+        </div>
+      </div>
+
+      <div class="day-master-label">DAY MASTER</div>
+      <div class="day-master-readout">
+        <strong>丙 Bǐng · Yang Fire</strong><br>
+        <em>The sun. Bright, warm, expressive.</em>
+      </div>
+
+      <div class="elements-bar">
+        <div class="elements-title">Element Distribution</div>
+        <div class="elements-grid">
+          <div class="element-item">
+            <div class="element-name txt-wood">Wood</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:50%;background:#5a8c3fcc"></div></div>
+            <div class="element-count">2</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-fire">Fire</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:50%;background:#c43a2acc"></div></div>
+            <div class="element-count">2</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-earth">Earth</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:50%;background:#b8860bcc"></div></div>
+            <div class="element-count">2</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-metal">Metal</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:25%;background:#8a8a8acc"></div></div>
+            <div class="element-count">1</div>
+          </div>
+          <div class="element-item">
+            <div class="element-name txt-water">Water</div>
+            <div class="element-bar-wrap"><div class="element-bar-fill" style="height:25%;background:#2273a8cc"></div></div>
+            <div class="element-count">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Compatibility -->
+  <div class="compat-section">
+    <div class="section-heading">The Reading</div>
+
+    <div class="score-area">
+      <div class="score-circle">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle class="score-circle-bg" cx="60" cy="60" r="40"/>
+          <circle class="score-circle-fill" cx="60" cy="60" r="40"/>
+        </svg>
+        <div class="score-num">
+          <span class="score-num-big">76</span>
+          <span class="score-num-small">Compatibility</span>
+        </div>
+      </div>
+
+      <div class="score-tags">
+        <span class="tag tag-good">Twin Day Masters</span>
+        <span class="tag tag-good">Yín–Wǔ Fire Alliance</span>
+        <span class="tag tag-good">Element Flow</span>
+        <span class="tag tag-warn">Fire Overload</span>
+        <span class="tag tag-note">Similar Temperaments</span>
+        <span class="tag tag-note">Easy Communication</span>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+
+      <div class="analysis-block">
+        <h4><span>🔥</span> Both Are Bǐng Fire Day Masters</h4>
+        <p>Both Emma and David have <strong>Bǐng (丙) — Yang Fire — as their Day Master</strong>. This creates immediate resonance: two suns, both warm, expressive, and drawn to being seen. They understand each other's energy instinctively. The caveat: <strong>two suns in the same sky</strong> can compete for light. Who leads, who supports — this dynamic will need conscious negotiation.</p>
+      </div>
+
+      <div class="analysis-block">
+        <h4><span>🌿</span> Yín–Wǔ Fire Alliance</h4>
+        <p>Emma's day branch is <strong>Wǔ (午) Fire</strong>; David's day branch is <strong>Yín (寅) Wood</strong>. Together, Yín and Wǔ form <strong>half of a three-branch Fire alliance</strong> (寅午戌). This is a deep energetic resonance — the kind of match where the two of you "just get" each other without needing to explain.</p>
+      </div>
+
+      <div class="analysis-block">
+        <h4><span>⚖️</span> Elemental Complementarity</h4>
+        <p>Emma's chart is Fire and Earth heavy, with <strong>no Metal</strong>. David's chart is beautifully balanced — and importantly, he carries <strong>1 Metal</strong>, filling Emma's structural gap. He also brings a more even distribution across all five elements, giving Emma's intense fire a <strong>channel to flow through</strong>. He is, in BaZi terms, a natural regulator for her.</p>
+      </div>
+
+      <div class="analysis-block">
+        <h4><span>🌊</span> The Shared Water Deficit</h4>
+        <p>Between the two of them, <strong>Water is minimal</strong> (1 each). In classical theory, Water governs wisdom, softness, and adaptability. A partnership with too little Water tends toward <strong>directness without nuance</strong> — both people mean well, both speak plainly, but neither knows how to soften or bend easily. Building the capacity to listen and pause is essential here.</p>
+      </div>
+
+      <div class="analysis-block">
+        <h4><span>☀️</span> Emma's Fire Needs an Outlet</h4>
+        <p>Emma carries <strong>4 units of Fire</strong> — a very intense sun. This kind of energy needs work to pour into, goals to chase, people to respond to it. Without an outlet, it turns inward and burns her. David's Wood provides <strong>steady fuel</strong>, but she'll also need her own career, projects, and passions that exist outside the relationship.</p>
+      </div>
+
+      <div class="analysis-block">
+        <h4><span>🌳</span> David's "Wood-Fire Illumination"</h4>
+        <p>David's Wood, Fire, and Earth are balanced, with his <strong>hour stem Yǐ Wood</strong> generating his Day Master Bǐng Fire. In classical language, this is called <strong>木火通明</strong> — "Wood and Fire in bright illumination." Intellectually sharp, expressive, emotionally layered. He is someone Emma's presence <strong>brings to full brightness</strong>, while he also holds a rich inner world of his own.</p>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px">
+      <div class="section-heading" style="font-size:1.3rem">Key Interactions</div>
+      <div class="interactions">
+        <div class="interaction-item interaction-good">
+          <div class="interaction-symbol">寅午</div>
+          <div class="interaction-name">Half Fire Alliance</div>
+          <div class="interaction-desc">Emma's day branch Wǔ and David's day branch Yín form half of the Fire trinity — a deep-frequency match</div>
+        </div>
+        <div class="interaction-item interaction-good">
+          <div class="interaction-symbol">乙→丙</div>
+          <div class="interaction-name">Wood Feeds Fire</div>
+          <div class="interaction-desc">David's hour stem Yǐ Wood naturally generates Emma's Day Master Bǐng Fire — a supportive, nourishing dynamic</div>
+        </div>
+        <div class="interaction-item interaction-good">
+          <div class="interaction-symbol">辰辰</div>
+          <div class="interaction-name">Shared Earth Root</div>
+          <div class="interaction-desc">Emma's hour branch and David's year branch are both Chén Earth — a stable, grounding connection</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conclusion -->
+  <div class="compat-section" style="animation-delay:0.9s">
+    <div class="section-heading">The Bottom Line</div>
+    <p class="conclusion-text">
+      Emma and David form what BaZi calls a <strong>"same-energy" pairing</strong> — both Bǐng Fire Day Masters, drawn to each other with an ease that feels instinctive from the start. The <strong>Yín–Wǔ Fire alliance</strong> and <strong>Wood-generating-Fire</strong> flow make the energetic exchange between them unusually smooth.
+      <br><br>
+      That said, because both are "sun-type" personalities, the relationship will need conscious <strong>rotation of leadership</strong> — not one giving way to the other, but taking turns standing in the light depending on the situation.
+      <br><br>
+      The <strong>Water deficit</strong> is the soft spot. Both are passionate, direct, action-oriented — but the softer arts of listening, pausing, and bending will need to be actively cultivated. Travel, deep conversation, shared reading, contemplative practice — anything that brings "Water" into the partnership.
+      <br><br>
+      <span class="conclusion-coda">A BaZi chart gives you the topography.<br>
+      Where the two of you actually go is still entirely up to you.</span>
+    </p>
+  </div>
+
+  <div class="footer">
+    <div class="footer-ornament">☽ ✦ ☾</div>
+    <div>True Solar Time Reading · Demo</div>
+    <div style="margin-top:6px; opacity:0.7">Emma × David</div>
+  </div>
+
+</div>
+
+</body>
+</html>
